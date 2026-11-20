@@ -61,9 +61,9 @@
 
 ### 2단계 · 본 실험 (11/24 ~ 11/30)
 
-- [ ] 다른 프로그램을 끄고 **내 컴퓨터에서 한 번에** `python -m src.experiment` 실행 (시간 수치는 한 환경의 것만 사용)
-- [ ] `python -m src.plot` → `results/figures/`의 그래프와 `summary.md` 확인
-- [ ] 결과(`results/results.csv`, `results_info.json`, 그래프) 커밋
+- [x] 다른 프로그램을 끄고 **내 컴퓨터에서 한 번에** `python -m src.experiment` 실행 (11/20, Windows 11 · Python 3.12.10 · 절전 모드 끔, 383.6초, 검사 모두 통과)
+- [x] `python -m src.plot` → `results/figures/`의 그래프와 `summary.md` 확인
+- [x] 결과(`results/results.csv`, `results_info.json`, 그래프) 커밋
 - [ ] (선택) 진흙 비용 c 실험: `python -m src.experiment --conditions walls_mud --sizes 100 --mud-cost 2 --out results/mud_c2.csv` 처럼 c별로 실행
 
 ### 3단계 · 해석과 보고서 초안 (12/1 ~ 12/7)
