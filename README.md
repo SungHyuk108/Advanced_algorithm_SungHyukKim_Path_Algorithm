@@ -1,209 +1,123 @@
-# algorithm-env
+# 격자 지도 최소 비용 경로 탐색: BFS · 다익스트라 · A* 비교
 
-2026-2 **고급알고리즘**(SIT2001-01)의 **실습 환경 template**입니다.
-컴파일러와 Python이 들어 있는 컨테이너, `src`/`tests` 뼈대, 그리고 그것이
-실제로 도는지 보여 주는 정렬 예제 하나가 들어 있습니다.
+고급알고리즘 개인프로젝트 "무엇이든 비교하기"의 코드입니다.
 
-- 강의 자료: [lec-algorithm.github.io/lecture](https://lec-algorithm.github.io/lecture/)
-- 강의 예제 코드: [lec-algorithm/algorithm-code](https://github.com/lec-algorithm/algorithm-code)
-- 시각화 자료: [lec-algorithm/algorithm-viz](https://github.com/lec-algorithm/algorithm-viz)
+- 저장소: https://github.com/SungHyuk108/Advanced_algorithm_SungHyukKim_Path_Algorithm
 
-## 언제 쓰나
+**풀려는 문제**: n×n 격자에서 장애물과 칸마다 다른 진입 비용이 주어질 때, 시작점에서 목표점까지 이동 비용의 합이 가장 작은 경로를 찾는 것.
 
-이 저장소는 **새 저장소의 출발점**입니다. 상단의 **Use this template**을 눌러
-자기 계정에 사본을 만들고 거기서 작업하세요.
+## 실행 환경
 
-- **과제**를 낼 때
-- **개인프로젝트**를 시작할 때 (수업계획서상 GitHub 저장소 제출이 필수입니다)
-- 알고리즘 코드를 돌려 볼 환경이 필요할 때
+- Python 3.10 이상
+- matplotlib (그래프용, 나머지는 표준 라이브러리만 사용)
 
-수업에서 다루는 예제 코드는 여기가 아니라 `algorithm-code`에 있습니다.
-그쪽은 매주 새 주제가 추가되므로, 복사하지 말고 저장소에서 바로 Codespace를
-만들거나 클론해서 `git pull`로 받으세요.
+방법은 둘 중 하나를 고릅니다.
 
-## 준비물
+**A. 내 컴퓨터에서 바로**
 
-**GitHub 계정 하나면 됩니다.** 로컬에서 돌리려면 Git과 Docker가 필요합니다.
-컴파일러와 Python은 컨테이너 이미지 안에 들어 있어 따로 설치하지 않습니다.
-
-## 시작하기 (권장): Codespaces
-
-1. 이 저장소 상단의 **Use this template** → **Create a new repository**
-2. 저장소 이름을 정합니다 (예: `algorithms-hw1`, `my-algorithm-project`)
-3. 만들어진 **내 저장소**에서 **Code** → **Codespaces** 탭
-4. **Create codespace on main**
-
-잠시 기다리면 브라우저에 VS Code가 뜹니다. **그 터미널이 곧 컨테이너 안**이므로
-바로 아래 [돌려보기](#돌려보기)로 넘어가면 됩니다.
-
-## 로컬에서 하기
-
-위와 같이 **내 저장소를 먼저 만든 뒤** 그것을 클론합니다.
-
-```sh
-git clone https://github.com/<본인 계정>/<내 저장소>.git
-cd <내 저장소>
-docker compose up -d
-docker compose exec lab bash
+```bash
+pip install -r requirements.txt
 ```
 
-처음 한 번은 이미지를 받느라 몇 분 걸립니다. 이후에는 몇 초면 뜹니다.
-**이후 모든 `docker compose` 명령은 이 폴더에서 칩니다.**
+**B. 컨테이너에서** (수업 `algorithm-env` 템플릿의 구성을 이 프로젝트에 맞게 줄인 것)
 
-VS Code를 쓴다면 Dev Containers 확장의 **Reopen in Container**를 골라도
-됩니다. Codespaces와 같은 설정을 씁니다.
+- GitHub에서 Code > Codespaces > Create codespace를 누르면 Python과 matplotlib이 든 환경이 열리고 테스트가 한 번 돌아갑니다.
+- 로컬 Docker를 쓴다면 `docker compose up -d` → `docker compose exec lab bash` 뒤 아래 명령을 그대로 씁니다.
 
-## 돌려보기
+## 실행 방법
 
-컨테이너 안에서 `make` 한 단어면 됩니다.
+모든 명령은 저장소 맨 위 폴더에서 실행합니다.
 
-- 실행
+```bash
+# 1. 테스트: 손으로 확인한 지도와 무작위 지도에서 세 알고리즘의 정답을 검사
+python -m unittest -v
 
-```sh
-make run
+# 2. 빠른 점검 (몇 초): n = 25, 50 · 시드 3 · 시간 1회
+python -m src.experiment --quick
+python -m src.plot --csv results/quick.csv --out results/quick_figures
+
+# 3. 본 실험: n = 25, 50, 100, 200 · 시드 50 · 시간 5회 중앙값
+python -m src.experiment
+python -m src.plot
 ```
 
-- 결과
+본 실험은 참고 환경(클라우드 리눅스, Python 3.13)에서 약 2분 걸렸습니다. 실행 시간은 컴퓨터마다 다르므로 보고서의 시간 수치는 한 컴퓨터에서 한 번에 잰 값을 씁니다. 실행 환경은 `results/results_info.json`에 함께 저장됩니다.
 
-```console
-sorted: 1 2 3 4 5 6 7 8 9 10
-sorted: 1 2 3 4 5 6 7 8 9 10
+## 폴더 구조
+
+```
+src/
+  grid.py         격자 자료구조, 지도 생성기, 도달 가능 검사
+  algorithms.py   bfs / dijkstra / astar → 같은 형식의 SearchResult
+  validate.py     경로 검증과 알고리즘 간 교차 검사
+  experiment.py   조건 × 크기 × 시드 반복, 시간 측정, CSV 저장
+  plot.py         CSV → 요약표(summary.csv, summary.md)와 그래프
+tests/
+  test_algorithms.py
+results/          실험 결과 CSV와 그래프가 저장되는 곳 (--quick 결과는 커밋하지 않음)
+Dockerfile, compose.yml, .devcontainer/   컨테이너·Codespaces 실행 환경
 ```
 
-C와 Python 두 구현이 같은 결과를 냅니다.
+## 실험 설계
 
-## 테스트
+| 항목 | 내용 |
+|---|---|
+| 지도 조건 | ① `empty` 빈 격자 ② `walls` 장애물 20% ③ `walls_mud` 장애물 20% + 진흙 30% (진흙 비용 5, 잔디 1) |
+| 크기 | n = 25, 50, 100, 200 (칸 수 625 ~ 40,000) |
+| 시작 · 목표 | (0, 0) → (n−1, n−1) |
+| 지도 수 | 조건 ②③은 크기마다 시드 0~49로 50장. 조건 ①은 무작위 요소가 없어 1장 |
+| 알고리즘 | `bfs`, `dijkstra`, `astar` (메인), `astar_large_g` (해석용 보조) |
+| 반복 | 실행 시간만 지도마다 5회 재서 중앙값. 나머지 지표는 결정적이라 1회 |
+| 총 탐색 횟수 | ① 4크기 × 1장 × 4 + ②③ 2조건 × 4크기 × 50장 × 4 = **1,616회** |
 
-- 실행
+### 지도 생성 규칙
 
-```sh
-make test
-```
+1. 시드로 난수 생성기를 만든다.
+2. 시작·목표 칸을 뺀 칸 중에서 **전체 칸 수의 정확히 20%**를 무작위로 골라 장애물로 둔다.
+3. 남은 칸 중에서 **전체 칸 수의 30%**(반올림)를 골라 진흙으로 둔다. (조건 ③)
+4. BFS로 목표까지 갈 수 있는지 확인한다. 막혔으면 **같은 난수 생성기로 이어서** 2번부터 다시 뽑고, 뽑은 횟수를 `attempts`에 기록한다.
 
-- 결과
+같은 (n, 조건, 시드)이면 어느 컴퓨터에서든 같은 지도가 나옵니다.
 
-```console
-ok    섞인 배열
-ok    이미 정렬된 배열
-ok    역순 배열
-ok    중복이 있는 배열
-ok    원소 하나
-ok    빈 배열
+### 공통 규칙
 
-6 checks, 0 failures
-...
-Ran 7 tests in 0.001s
+- 진입 비용은 칸에 **들어갈 때** 내고, 시작 칸의 비용은 세지 않는다.
+- 이웃은 **위, 아래, 왼쪽, 오른쪽** 순서로 본다. (공모전 스타터킷 `search.py`와 같은 순서)
+- **동점 처리**: 키가 같으면 먼저 큐에 들어온 칸을 먼저 꺼낸다. 중간 발표에서 정한 규칙이고, BFS·다익스트라·A*에 똑같이 적용한다.
+- A*는 h = 맨해튼 거리, w = 1. 칸 비용이 1 이상이라 h가 실제 남은 비용을 넘지 않으므로 최소 비용이 보장된다.
 
-OK
-```
+### A* 보조 변형 `astar_large_g`를 넣은 이유
 
-테스트가 하나라도 실패하면 `make`가 0이 아닌 코드로 끝납니다. 과제를 내기
-전에 이 명령이 통과하는지 확인하세요.
+시작과 목표가 모서리에 있으면 빈 격자의 모든 칸이 같은 f를 가진다. "먼저 들어온 칸" 규칙에서는 이때 A*가 BFS와 같은 순서로 격자 전체를 확장한다(n = 25에서 625칸). 동점일 때 g가 큰 칸(목표에 더 가까이 간 칸)을 먼저 꺼내면 49칸만 확장한다. A*의 최소 비용 보장은 동점 처리와 무관하고 효율만 달라지므로, 메인 결과는 중간 발표 규칙을 따르고 이 변형은 결과를 해석하는 근거로 함께 잰다.
 
-| 명령 | 하는 일 |
-| --- | --- |
-| `make run` | 예제 실행 (C · Python) |
-| `make test` | 유닛 테스트 (C · Python) |
-| `make run-c` · `make run-py` | 한쪽만 실행 |
-| `make test-c` · `make test-py` | 한쪽만 테스트 |
-| `make debug` | 디버그 심볼을 넣어 빌드 |
-| `make clean` | 빌드 산출물 정리 |
+## 측정 지표 (`results.csv` 열)
 
-## VS Code에서 실행·디버그
+| 열 | 뜻 |
+|---|---|
+| `expanded` | 큐에서 꺼내 확장한 칸 수 (목표 칸 포함). 갱신 전에 넣었던 낡은 항목을 꺼내 건너뛴 것은 세지 않음 |
+| `max_open` | 큐에 동시에 들어 있던 **서로 다른 칸** 수의 최댓값 |
+| `updates` | 이미 적힌 g가 더 작은 값으로 바뀐 횟수 (갱신). BFS는 구조상 0 |
+| `time_ms` | 탐색 함수 호출부터 경로 복원까지의 시간 중앙값 (지도 생성 제외, 측정 중 가비지 컬렉션 끔) |
+| `cost` / `steps` | 경로의 비용 합 / 경로 칸 수 (이동 횟수) |
+| `opt_cost` / `excess_pct` | 다익스트라가 찾은 최소 비용 / 최소 대비 초과율(%) |
+| `attempts` | 도달 가능한 지도가 나올 때까지 지도를 뽑은 횟수 |
 
-Codespaces나 Dev Containers로 열었다면 편집기에서 바로 됩니다.
+## 결과 검증
 
-| 하고 싶은 것 | 방법 |
-| --- | --- |
-| 파일 하나 실행 | 편집기 오른쪽 위 **▶ 버튼** (Code Runner) |
-| 전체 실행 | `Cmd/Ctrl + Shift + B` (기본 빌드 작업이 `make run`) |
-| 테스트 | 명령 팔레트 → **Tasks: Run Test Task** |
-| C 디버그 | `F5` → **C 디버그 (현재 파일)** |
-| Python 디버그 | `F5` → **Python 디버그 (현재 파일)** |
+실험 중 지도마다 아래를 확인하고, 하나라도 어긋나면 실행을 멈춥니다 (`src/validate.py`).
 
-`F5`를 누르면 빌드가 먼저 돌아 심볼이 있는 바이너리를 만들고 디버거가
-붙습니다. 중단점을 걸고 변수를 들여다볼 수 있습니다.
+- 모든 경로가 시작→목표로 한 칸씩 이어지고 벽을 지나지 않으며, 보고한 비용·칸 수와 일치한다.
+- 다익스트라와 A*(두 동점 처리 모두)의 경로 비용이 같다.
+- BFS의 경로 비용 ≥ 최소 비용, BFS의 경로 칸 수 ≤ 다른 알고리즘의 경로 칸 수.
+- 같은 지도를 여러 번 돌려도 지표가 같다.
 
-### 파일 하나만 실행·디버그하기
+## 중간 발표 대비 변경 사항
 
-**C 디버그 (현재 파일)**은 열려 있는 `.c` 파일을 그대로 디버깅합니다. 폴더가
-늘어나도 구성을 새로 만들 필요가 없습니다.
+- 조건 ① 빈 격자는 시드를 바꿔도 지도가 같아서 크기마다 1장만 사용한다.
+- A* 보조 변형 `astar_large_g`를 추가했다 (위 설명 참고).
+- 큐 최대 길이는 "큐에 들어 있는 서로 다른 칸 수"로 정의했다.
+- 이에 따라 총 탐색 횟수는 1,616회다.
 
-같은 폴더의 `.c`를 함께 링크하므로, 구현이 옆 파일에 있어도 됩니다. 대신
-**한 폴더에 `main`은 하나만** 두세요.
+## AI 사용
 
-터미널에서 직접 부를 수도 있습니다.
-
-```sh
-make src/main.debug.out && ./src/main.debug.out
-```
-
-### ▶ 버튼에 대해
-
-편집기 오른쪽 위의 ▶ 버튼은 **Code Runner** 확장이 제공합니다. C든 Python이든
-열려 있는 파일을 그대로 실행합니다.
-
-두 확장이 각각 ▶ 버튼을 내놓으면 헷갈리므로, C/C++ 확장 쪽은 꺼 두었습니다
-(`C_Cpp.debugShortcut`). 그쪽 버튼은 **파일 하나만** 컴파일해서 이런 오류를
-냅니다.
-
-```console
-undefined reference to `bubbleSort'
-collect2: error: ld returned 1 exit status
-```
-
-Code Runner도 기본 설정 그대로면 같은 문제가 나고, Python은 이미지에 없는
-`python`을 찾습니다. 그래서 `.vscode/settings.json`에서 두 가지를 고쳐
-두었습니다.
-
-- C는 `Makefile`의 `%.out` 규칙을 거쳐 **같은 폴더의 `.c`를 함께** 빌드합니다
-- Python은 `python3`로 실행합니다
-- 출력 패널이 아니라 **터미널**에서 돌립니다. 그래야 `scanf`나 `input()`이 멈추지 않습니다
-
-## 저장소 구조
-
-```plaintext
-algorithm-env/
-├── .devcontainer/devcontainer.json  # Codespaces · Dev Containers 설정
-├── compose.yml                      # 실습 컨테이너 (서비스 이름: lab)
-├── Dockerfile                       # gcc · gdb · make · python3 · git
-├── .vscode/                         # 빌드·디버그 설정 (F5, Cmd+Shift+B)
-├── Makefile                         # run · test · debug · clean
-├── src/
-│   ├── sort.h · sort.c              # C 구현
-│   ├── main.c                       # C 실행 예제
-│   ├── sort.py                      # Python 구현
-│   └── main.py                      # Python 실행 예제
-└── tests/
-    ├── test_sort.c                  # C 유닛 테스트 (표준 C만 사용)
-    └── test_sort.py                 # Python 유닛 테스트 (unittest)
-```
-
-## 규약
-
-- **실행 파일은 `*.out`으로 만듭니다.** `.gitignore`가 `*.out`만 걸러내므로,
-  컨테이너에서 컴파일한 Linux 바이너리가 커밋에 섞이지 않습니다.
-- **외부 라이브러리를 쓰지 않습니다.** C는 표준 라이브러리만, Python은 표준
-  모듈만 씁니다. C 테스트도 프레임워크 없이 `assert` 수준으로 직접 씁니다.
-- **C와 Python은 같은 알고리즘을 같은 이름의 함수로 구현합니다.** 언어 차이가
-  알고리즘 차이로 보이지 않게 합니다.
-- 파일명은 각 언어의 관례를 따릅니다. C는 camelCase(`bubbleSort`), Python은
-  snake_case(`bubble_sort`)입니다.
-
-## 자기 코드로 바꾸기
-
-`src`의 버블 정렬은 환경이 도는지 보여 주는 예제일 뿐입니다. 지우고 자기
-코드를 넣으세요. `tests`도 마찬가지입니다. 뼈대(`Makefile`, `src`, `tests`,
-컨테이너 설정)만 남기면 됩니다.
-
-## 변경 기록
-
-버전과 변경 내역은 [CHANGELOG.md](CHANGELOG.md)에 있습니다.
-
-## 정리
-
-```sh
-docker compose down
-```
-
-컨테이너를 지워도 코드는 그대로 남습니다.
+코드의 초안은 AI(Claude)와 함께 작성했습니다. 어떤 부분을 묻고 받았는지, 어떤 부분을 직접 확인하고 수정했는지는 보고서의 "AI 사용 내역"에 기록합니다.
